@@ -1,54 +1,51 @@
-```markdown
-# Edge-FPGA Deployment of DeepLabCut for Real-Time Human Pose Estimation
+# **Edge-FPGA Deployment of DeepLabCut for Real-Time Human Pose Estimation**
 
 Implementation code for the paper:
-> **Edge-FPGA Deployment of DeepLabCut for Real-Time Human Pose Estimation: A Distributed INT8/FP32 Hybrid Inference Architecture**
-> Mohamed Elmahlavy, Basim Elmashharavi
+
+> **Edge-FPGA Deployment of DeepLabCut for Real-Time Human Pose Estimation: A Distributed INT8/FP32 Hybrid Inference Architecture**  
+> Mohamed Elmahlavy, Basim Elmashharavi  
 > CODIT 2026
 
 ---
 
 ## What This Is
-This repository contains the full pipeline for deploying the DeepLabCut ResNet-101 human pose estimation backbone on an AMD Kria KV260 FPGA board, with the deconvolution prediction head running on a host PC in FP32. The system runs at 13.1 FPS on the KV260 with joint detection confidence up to 0.92 on visible keypoints.
+
+This repository contains the full pipeline for deploying the DeepLabCut ResNet-101 human pose estimation backbone on an AMD Kria KV260 FPGA board, with the deconvolution prediction head running on a host PC in FP32. The system runs at **13.1 FPS** on the KV260 with joint detection confidence up to **0.92** on visible keypoints.
 
 ---
 
 ## Hardware Required
-- AMD Kria KV260 Vision AI Starter Kit
-- AR1335 camera module (comes with KV260)
-- Host PC (Windows or Linux) connected via Gigabit Ethernet
-- Vitis AI 2.5 Docker image (for quantization and compilation, runs on host PC)
+
+* **AMD Kria KV260** Vision AI Starter Kit
+* **AR1335** camera module *(comes with KV260)*
+* **Host PC** (Windows or Linux) connected via Gigabit Ethernet
+* **Vitis AI 2.5** Docker image *(for quantization and compilation, runs on host PC)*
 
 ---
 
 ## System Overview
-
 ```text
-KV260 (Edge)                          Host PC
-─────────────                         ────────
+       KV260 (Edge)                                     Host PC
+─────────────────────────                       ────────────────────────
 AR1335 Camera (960×540 NV12)
-↓
+             ↓
 AP1302 ISP (hardware RAW→NV12)
-↓
+             ↓
 OpenCV NV12→BGR, resize 368×368
-↓
-Scale ×0.5 (uint8 → INT8)
-↓
-DPU B3136: ResNet-101 INT8            Receive INT8 tensor [1×23×23×2048]
-↓                                     ↓
-Output [1×23×23×2048] INT8 ──TCP──→  Dequantize ×0.125 (INT8 → FP32)
-                                      ↓
-                                      TensorFlow: deconv heads (FP32)
-                                      ↓
-                                      Heatmaps [1×46×46×14]
-                                      ↓
-                                      Sigmoid + argmax → (x,y) per joint
-                                      ↓
-                                      Confidence scores + visualization
-
-```
-
----
+             ↓
+ Scale ×0.5 (uint8 → INT8)
+             ↓
+ DPU B3136: ResNet-101 INT8                 Receive INT8 tensor [1×23×23×2048]
+             ↓                                              ↓
+Output [1×23×23×2048] INT8 ───── TCP ─────→  Dequantize ×0.125 (INT8 → FP32)
+                                                            ↓
+                                             TensorFlow: deconv heads (FP32)
+                                                            ↓
+                                                  Heatmaps [1×46×46×14]
+                                                            ↓
+                                             Sigmoid + argmax → (x,y) per joint
+                                                            ↓
+                                              Confidence scores + visualization
 
 ## Step-by-Step Setup
 
