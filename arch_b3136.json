@@ -1,0 +1,35 @@
+{
+  "fingerprint": "0x101000016010406",
+  "target": "DPUCZDX8G",
+  "dpu": {
+    "name": "DPUCZDX8G_ISA1_B3136",
+    "version": {
+      "major": 4,
+      "minor": 0,
+      "patch": 0
+    },
+    "arch": {
+      "bank_group": {
+        "arg_max": 8,
+        "data": {
+          "count": 4,
+          "width": 256
+        },
+        "param": {
+          "count": 4,
+          "width": 256
+        }
+      },
+      "corenum": 1,
+      "icp": 32,
+      "ocp": 32,
+      "pp": 4,
+      "hp_width": 4,
+      "img_bkgrp_size": 4,
+      "load_parallel": 2,
+      "save_parallel": 2
+    },
+    "load_img_fmt": "HWC",
+    "tensor_format": "HWC"
+  }
+}
