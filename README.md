@@ -25,95 +25,71 @@ This repository contains the full pipeline for deploying the DeepLabCut ResNet-1
 
 ## System Overview
 
-```text
-
-
-
-       KV260 (Edge)                                     Host PC
-
-
-
-─────────────────────────                       ────────────────────────
-
-
-
-AR1335 Camera (960×540 NV12)
-
-
-
-             ↓
-
-
-
-AP1302 ISP (hardware RAW→NV12)
-
-
-
-             ↓
-
-
-
-OpenCV NV12→BGR, resize 368×368
-
-
-
-             ↓
-
-
-
- Scale ×0.5 (uint8 → INT8)
-
-
-
-             ↓
-
-
-
- DPU B3136: ResNet-101 INT8                 Receive INT8 tensor [1×23×23×2048]
-
-
-
-             ↓                                              ↓
-
-
-
-Output [1×23×23×2048] INT8 ───── TCP ─────→  Dequantize ×0.125 (INT8 → FP32)
-
-
-
-                                                            ↓
-
-
-
-                                             TensorFlow: deconv heads (FP32)
-
-
-
-                                                            ↓
-
-
-
-                                                  Heatmaps [1×46×46×14]
-
-
-
-                                                            ↓
-
-
-
-                                             Sigmoid + argmax → (x,y) per joint
-
-
-
-                                                            ↓
-
-
-
-                                              Confidence scores + visualization
-
-
-
-```                                     
+```mermaid
+graph TD
+    %% -- Subgraph: KV260 (Edge) --
+    subgraph KV260 ["<br/><b>KV260 (Edge)</b><br/>───────"]
+        direction TB
+        Camera["AR1335 Camera<br/>960×540 NV12"]:::hardware
+        
+        AP1302_ISP["AP1302 ISP<br/>hardware RAW→NV12"]:::fpga_accel
+        
+        OpenCV["OpenCV<br/>NV12→BGR, resize 368×368"]:::cpu_sw
+        
+        Scale["Scale ×0.5<br/>uint8 → INT8"]:::cpu_sw
+        
+        DPU["<b>DPU B3136: ResNet-101 INT8</b><br/>FPGA Acceleration"]:::fpga_accel
+        
+        Edge_Out["Output INT8 Tensor<br/>1×23×23×2048"]:::tensor
+
+        Camera --> AP1302_ISP
+        AP1302_ISP --> OpenCV
+        OpenCV --> Scale
+        Scale --> DPU
+        DPU --> Edge_Out
+    end
+
+    %% -- Connection --
+    Edge_Out -- "TCP<br/>(Dequantized tensor)" --> Host_In:::tcp_comm
+
+    %% -- Subgraph: Host PC --
+    subgraph HostPC ["<br/><b>Host PC</b><br/>───────"]
+        direction TB
+        Host_In["Receive Tensor<br/>INT8 1×23×23×2048"]:::tensor
+        
+        Dequantize["Dequantize ×0.125<br/>INT8 → FP32"]:::cpu_sw
+        
+        TensorFlow["TensorFlow: deconv heads<br/>(FP32)"]:::cpu_sw
+        
+        Heatmaps["Heatmaps<br/>1×46×46×14"]:::tensor
+        
+        PostProcess["Sigmoid + argmax<br/>→ x,y per joint"]:::cpu_sw
+        
+        Visualization["Confidence scores +<br/>visualization"]:::cpu_sw
+
+        Host_In --> Dequantize
+        Dequantize --> TensorFlow
+        TensorFlow --> Heatmaps
+        Heatmaps --> PostProcess
+        PostProcess --> Visualization
+    end
+
+    %% -- Style Definitions --
+    classDef hardware fill:#e1f5fe,stroke:#01579b,stroke-width:2px,rx:8,ry:8,color:#000;
+    classDef fpga_accel fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px,rx:8,ry:8,color:#000;
+    classDef cpu_sw fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,rx:8,ry:8,color:#000;
+    classDef tensor fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px,stroke-dasharray: 5 5,rx:5,ry:5,color:#000;
+    classDef tcp_comm stroke:#b71c1c,stroke-width:2px,color:#b71c1c,font-weight:bold;
+
+    %% Add legend (Optional but helpful)
+    subgraph Legend ["Legend"]
+        direction LR
+        LegHW["Hardware"]:::hardware
+        LegFPGA["FPGA Accel"]:::fpga_accel
+        LegCPU["CPU/Software"]:::cpu_sw
+        LegTensor["Tensor"]:::tensor
+    end
+```             
 ---
 
 ## Step-by-Step Setup
