@@ -4,6 +4,7 @@ Implementation code for the paper:
 
 > **Edge-FPGA Deployment of DeepLabCut for Real-Time Human Pose Estimation: A Distributed INT8/FP32 Hybrid Inference Architecture**  
 > Mohamed Elmahlavy, Basim Elmashharavi, Bahadır ÇATALBAŞ 
+
 > CODIT 2026
 
 ---
