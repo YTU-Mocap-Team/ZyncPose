@@ -1,3 +1,4 @@
+```markdown
 # **Edge-FPGA Deployment of DeepLabCut for Real-Time Human Pose Estimation**
 
 Implementation code for the paper:
@@ -24,6 +25,7 @@ This repository contains the full pipeline for deploying the DeepLabCut ResNet-1
 ---
 
 ## System Overview
+
 ```text
        KV260 (Edge)                                     Host PC
 ─────────────────────────                       ────────────────────────
@@ -46,6 +48,10 @@ Output [1×23×23×2048] INT8 ───── TCP ─────→  Dequantize
                                              Sigmoid + argmax → (x,y) per joint
                                                             ↓
                                               Confidence scores + visualization
+
+```
+
+---
 
 ## Step-by-Step Setup
 
@@ -240,5 +246,6 @@ If you use this code, please cite:
 This work was supported in part by the AMD University Program. The KV260 boards were provided through the AMD Academic Program.
 
 ```
+
 
 ```
