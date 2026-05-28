@@ -242,7 +242,3 @@ If you use this code, please cite:
 We would like to express our deepest gratitude to our professor, Bahadır ÇATALBAŞ, for his invaluable guidance, continuous support, and for generously providing the necessary hardware and resources to make this project possible. 
 
 Additionally, this work was supported in part by the AMD University Program, and the KV260 boards were provided through the AMD Academic Program.
-```
-
-
-```
