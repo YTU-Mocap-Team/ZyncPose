@@ -1,4 +1,3 @@
-```markdown
 # **Edge-FPGA Deployment of DeepLabCut for Real-Time Human Pose Estimation**
 
 Implementation code for the paper:
