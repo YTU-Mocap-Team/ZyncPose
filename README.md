@@ -229,7 +229,7 @@ If you use this code, please cite:
 ```bibtex
 @inproceedings{elmahlavy2026edge,
   title={Edge-{FPGA} Deployment of {DeepLabCut} for Real-Time Human Pose Estimation: A Distributed {INT8/FP32} Hybrid Inference Architecture},
-  author={Elmahlavy, Mohamed and Elmashharavi, Basim},
+  author={Elmahlavy, Mohamed and Elmashharavi, Basim and Çatalbaş, Bahadır},
   booktitle={2026 12th International Conference on Control, Decision and Information Technologies (CODIT)},
   year={2026}
 }
